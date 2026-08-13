@@ -3,11 +3,13 @@ import {FreshStore} from './store.js';
 import {decideFreshness} from './fresh.js';
 import {fingerprint} from './verification.js';
 import {ActivityStore} from './activity.js';
+import {runProductionAcceptance} from './selftest.js';
 
-export const VERSION='0.1.1';
+export const VERSION='0.1.2';
 const store=new FreshStore();
 const activity=new ActivityStore();
 const clients=new Map();
+const readiness={ok:false,status:'STARTING',checkedAt:null,error:null};
 
 function send(res,status,data){
   res.writeHead(status,{'content-type':'application/json'});
@@ -19,11 +21,8 @@ function readJson(req){
     let text='';
     req.on('data',chunk=>{text+=chunk;});
     req.on('end',()=>{
-      try {
-        resolve(text ? JSON.parse(text) : {});
-      } catch (err) {
-        reject(err);
-      }
+      try { resolve(text ? JSON.parse(text) : {}); }
+      catch (err) { reject(err); }
     });
     req.on('error',reject);
   });
@@ -33,9 +32,7 @@ function isUrl(value){
   try {
     const u=new URL(value);
     return u.protocol==='http:'||u.protocol==='https:';
-  } catch {
-    return false;
-  }
+  } catch { return false; }
 }
 
 function checkResult(input){
@@ -48,7 +45,8 @@ function checkResult(input){
 
 async function handler(req,res){
   try {
-    if(req.method==='GET'&&req.url==='/health') return send(res,200,{ok:true,service:'FRESH',version:VERSION});
+    if(req.method==='GET'&&req.url==='/') return send(res,200,{service:'FRESH',version:VERSION,tagline:'Know whether to fetch again.',health:'/health',check:'/v1/check',observe:'/v1/observe',mcp:'/mcp'});
+    if(req.method==='GET'&&req.url==='/health') return send(res,readiness.ok?200:503,{ok:readiness.ok,service:'FRESH',version:VERSION,readiness});
     if(req.method==='GET'&&req.url==='/version') return send(res,200,{service:'FRESH',version:VERSION});
     if(req.method==='GET'&&req.url==='/v1/activity') return send(res,200,{...activity.snapshot(),store:store.stats()});
 
@@ -121,6 +119,21 @@ async function handler(req,res){
 }
 
 const port=Number(process.env.PORT||3000);
-http.createServer(handler).listen(port,'0.0.0.0',()=>{
+const server=http.createServer(handler);
+server.listen(port,'0.0.0.0',async()=>{
   console.log(`FRESH ${VERSION} listening on ${port}`);
+  try {
+    const result=await runProductionAcceptance(port);
+    readiness.ok=true;
+    readiness.status='READY';
+    readiness.checkedAt=new Date().toISOString();
+    readiness.error=null;
+    console.log('FRESH production acceptance passed',JSON.stringify(result));
+  } catch (err) {
+    readiness.ok=false;
+    readiness.status='FAILED';
+    readiness.checkedAt=new Date().toISOString();
+    readiness.error=err.message;
+    console.error('FRESH production acceptance failed',err);
+  }
 });

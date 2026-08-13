@@ -15,7 +15,7 @@ export async function runProductionAcceptance(port){
   const before=await requestJson(`${base}/v1/activity`,{headers});
   const beforeVerified=before.realUse?.verifiedStrangers??0;
   const now=Date.now();
-  const url='https://fresh-selftest.invalid/resource';
+  const url=`https://fresh-selftest.invalid/resource/${now}`;
 
   const unknown=await requestJson(`${base}/v1/check`,{method:'POST',headers,body:JSON.stringify({url,lastSeenAt:new Date(now-60000).toISOString(),toleranceSeconds:3600})});
   if(unknown.decision!=='UNKNOWN')throw new Error(`expected UNKNOWN, got ${unknown.decision}`);

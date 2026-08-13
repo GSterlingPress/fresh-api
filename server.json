@@ -1,0 +1,10 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+  "name": "io.github.GSterlingPress/fresh",
+  "description": "Shared URL freshness intelligence for AI agents. Decide REUSE, REFETCH, or UNKNOWN before retrieving the web again.",
+  "version": "0.1.0",
+  "packages": [],
+  "remotes": [
+    {"type":"streamable-http","url":"https://REPLACE_WITH_PRODUCTION_HOST/mcp"}
+  ]
+}

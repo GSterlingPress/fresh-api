@@ -4,6 +4,10 @@
 
 FRESH is shared URL freshness intelligence for AI agents. Before re-fetching, re-scraping, re-rendering, or re-embedding a URL, ask whether the previously seen version is probably still fresh enough to reuse.
 
+Production base URL: `https://fresh-api-production-c783.up.railway.app`
+
+MCP endpoint: `https://fresh-api-production-c783.up.railway.app/mcp`
+
 FRESH returns one of three decisions:
 
 - `REUSE` — cached knowledge is probably still fresh enough
@@ -43,6 +47,8 @@ FRESH does not need raw page contents, cookies, target-site credentials, or cust
 
 A core-tool invocation is evidence of use, not automatically proof of a genuine stranger. FRESH classifies candidate activity as `KNOWN_VALIDATOR`, `LIKELY_VALIDATOR`, `CONTROLLED_TEST`, `UNKNOWN_MACHINE`, or `CREDIBLE_REAL_USE`. Only `CREDIBLE_REAL_USE` advances stranger milestones.
 
+Our acceptance/smoke traffic uses `X-Tollbooth-Internal: 1` or `X-Fresh-Internal: 1` so it cannot earn stranger credit.
+
 ## Status
 
-V1 experimental infrastructure. Priorities: conservative decisions, low latency, sub-penny economics, privacy-safe shared learning, REST + MCP, durable observations, and auditable real-use analytics.
+V1.0.1 experimental production infrastructure. Priorities: conservative decisions, low latency, sub-penny economics, privacy-safe shared learning, REST + MCP, durable observations, and auditable real-use analytics.

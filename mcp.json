@@ -1,0 +1,6 @@
+{
+  "name": "io.github.GSterlingPress/fresh",
+  "title": "FRESH — URL Freshness for AI Agents",
+  "description": "Decide whether to REUSE, REFETCH, or return UNKNOWN before paying to retrieve a URL again.",
+  "transport": {"type":"streamable-http","url":"/mcp"}
+}

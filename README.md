@@ -49,6 +49,10 @@ A core-tool invocation is evidence of use, not automatically proof of a genuine 
 
 Our acceptance/smoke traffic uses `X-Tollbooth-Internal: 1` or `X-Fresh-Internal: 1` so it cannot earn stranger credit.
 
+## Production acceptance gate
+
+Every Railway deployment now performs live internal checks against the running service before `/health` can return 200. The gate exercises REST, `UNKNOWN`, `REUSE`, `REFETCH`, persistent observation reload, MCP initialize, MCP tool discovery, MCP `fresh_check`, and verifies that the controlled self-test does not increase the verified-stranger count.
+
 ## Status
 
-V1.0.1 experimental production infrastructure. Priorities: conservative decisions, low latency, sub-penny economics, privacy-safe shared learning, REST + MCP, durable observations, and auditable real-use analytics.
+v0.1.2 experimental production infrastructure. Priorities: conservative decisions, low latency, sub-penny economics, privacy-safe shared learning, REST + MCP, durable observations, and auditable real-use analytics.

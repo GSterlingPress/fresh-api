@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.GSterlingPress/fresh",
   "title": "FRESH — Shared URL Freshness Intelligence",
-  "description": "Shared URL freshness intelligence for AI agents. Decide REUSE, REFETCH, or UNKNOWN before retrieving the web again.",
+  "description": "Decide whether an agent should reuse cached URL knowledge or fetch the resource again.",
   "version": "0.1.2",
   "websiteUrl": "https://fresh-api-production-c783.up.railway.app",
   "repository": {

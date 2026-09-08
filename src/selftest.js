@@ -14,6 +14,8 @@ export async function runProductionAcceptance(port){
   const headers={'content-type':'application/json','x-tollbooth-internal':'1','user-agent':'fresh-production-selftest/1.0'};
   const before=await requestJson(`${base}/v1/activity`,{headers});
   const beforeVerified=before.realUse?.verifiedStrangers??0;
+  const beforeRealCalls=before.realUse?.allTimeRealWorldCalls??0;
+  const beforeRealCallers=before.realUse?.allTimeRealWorldCallers??0;
   const now=Date.now();
   const url=`https://fresh-selftest.invalid/resource/${now}`;
 
@@ -47,9 +49,13 @@ export async function runProductionAcceptance(port){
 
   const after=await requestJson(`${base}/v1/activity`,{headers});
   const afterVerified=after.realUse?.verifiedStrangers??0;
+  const afterRealCalls=after.realUse?.allTimeRealWorldCalls??0;
+  const afterRealCallers=after.realUse?.allTimeRealWorldCallers??0;
   if(afterVerified!==beforeVerified)throw new Error(`self-test changed verified stranger count ${beforeVerified} -> ${afterVerified}`);
+  if(afterRealCalls!==beforeRealCalls)throw new Error(`self-test changed real-world call count ${beforeRealCalls} -> ${afterRealCalls}`);
+  if(afterRealCallers!==beforeRealCallers)throw new Error(`self-test changed real-world caller count ${beforeRealCallers} -> ${afterRealCallers}`);
   const controlled=after.feed?.some(e=>e.audit?.userAgent==='fresh-production-selftest/1.0'&&e.classification==='CONTROLLED_TEST');
   if(!controlled)throw new Error('self-test traffic was not classified CONTROLLED_TEST');
 
-  return {unknown:unknown.decision,reuse:reuse.decision,refetch:refetch.decision,persistence:true,mcp:true,strangerCountUnchanged:true};
+  return {unknown:unknown.decision,reuse:reuse.decision,refetch:refetch.decision,persistence:true,mcp:true,strangerCountUnchanged:true,realWorldCountersUnchanged:true};
 }
